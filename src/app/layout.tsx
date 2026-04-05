@@ -41,7 +41,7 @@ export default async function RootLayout({
                 <div className="max-w-3xl">
                   <p className="text-sm uppercase tracking-[0.4em] text-amber-200/70">Pickleblall D7 Club</p>
                 </div>
-                <div className="flex flex-col items-start gap-3 lg:items-end">
+                <div className="flex flex-wrap items-center gap-3 lg:justify-end">
                   <AppNavigation />
                   {isAdmin ? (
                     <div className="flex flex-wrap items-center gap-3 text-sm">
