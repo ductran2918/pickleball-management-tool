@@ -1,5 +1,6 @@
 import { createSession } from "../actions";
-import { EmptyState, MemberCheckboxGrid, SectionCard, SessionSummaryCard } from "../_components/club-ui";
+import { EmptyState, MemberCheckboxGrid, ReadOnlyNotice, SectionCard, SessionSummaryCard } from "../_components/club-ui";
+import { isAdminAuthenticated } from "../_lib/auth";
 import { getTodayDateValue } from "../_lib/format";
 import { getSessionsData } from "../../lib/db";
 
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function SessionsPage() {
   const data = await getSessionsData();
+  const isAdmin = await isAdminAuthenticated();
 
   return (
     <div className="grid gap-8 xl:grid-cols-[0.92fr_1.08fr]">
@@ -15,46 +17,50 @@ export default async function SessionsPage() {
         title="Create a match"
         description="Add the match date, court rent, and players who joined. Attendance editing happens inside each session detail page after creation."
       >
-        <form action={createSession} className="space-y-5">
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="space-y-2">
-              <span className="text-sm font-medium text-stone-300">Match date</span>
-              <input
-                type="date"
-                name="playedOn"
-                defaultValue={getTodayDateValue()}
-                className="w-full rounded-2xl border border-white/10 bg-stone-950/70 px-4 py-3 text-stone-100 outline-none transition focus:border-amber-300/60"
-              />
-            </label>
-            <label className="space-y-2">
-              <span className="text-sm font-medium text-stone-300">Court rent</span>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="courtCost"
-                defaultValue="515"
-                className="w-full rounded-2xl border border-white/10 bg-stone-950/70 px-4 py-3 text-stone-100 outline-none transition focus:border-amber-300/60"
-              />
-            </label>
-          </div>
+        {isAdmin ? (
+          <form action={createSession} className="space-y-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="space-y-2">
+                <span className="text-sm font-medium text-stone-300">Match date</span>
+                <input
+                  type="date"
+                  name="playedOn"
+                  defaultValue={getTodayDateValue()}
+                  className="w-full rounded-2xl border border-white/10 bg-stone-950/70 px-4 py-3 text-stone-100 outline-none transition focus:border-amber-300/60"
+                />
+              </label>
+              <label className="space-y-2">
+                <span className="text-sm font-medium text-stone-300">Court rent</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  name="courtCost"
+                  defaultValue="515"
+                  className="w-full rounded-2xl border border-white/10 bg-stone-950/70 px-4 py-3 text-stone-100 outline-none transition focus:border-amber-300/60"
+                />
+              </label>
+            </div>
 
-          <div className="space-y-3">
-            <p className="text-sm font-medium text-stone-300">Players who joined</p>
-            {data.activeMembers.length === 0 ? (
-              <EmptyState>Create at least one active member before saving a session.</EmptyState>
-            ) : (
-              <MemberCheckboxGrid members={data.activeMembers} />
-            )}
-          </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-stone-300">Players who joined</p>
+              {data.activeMembers.length === 0 ? (
+                <EmptyState>Create at least one active member before saving a session.</EmptyState>
+              ) : (
+                <MemberCheckboxGrid members={data.activeMembers} />
+              )}
+            </div>
 
-          <button
-            type="submit"
-            className="rounded-full bg-amber-300 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-amber-200"
-          >
-            Save session
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="rounded-full bg-amber-300 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-amber-200"
+            >
+              Save session
+            </button>
+          </form>
+        ) : (
+          <ReadOnlyNotice>Guest mode is read-only. Admin sign-in is required to create, edit, or delete sessions.</ReadOnlyNotice>
+        )}
       </SectionCard>
 
       <SectionCard

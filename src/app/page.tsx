@@ -31,14 +31,10 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
       <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.25),transparent_35%),linear-gradient(135deg,#1d180f,#0d0b09_60%,#1a1308)] px-6 py-8 shadow-[0_40px_120px_rgba(0,0,0,0.4)] sm:px-10 sm:py-10">
         <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-amber-200/70">Overview</p>
+            <p className="text-sm uppercase tracking-[0.35em] text-amber-200/70">Welcome</p>
             <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-              Keep the club flowing without digging through one giant screen.
+              Welcome to Pickleblall D7 Club
             </h2>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-stone-300">
-              Use the navigation above to jump straight into roster work, session attendance, or monthly cost review.
-              This page stays focused on the current pulse of the club.
-            </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
@@ -66,27 +62,20 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
       </section>
 
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-        <SectionCard
-          eyebrow="Jump points"
-          title="Navigate by task"
-          description="Each area now has one job. Use these shortcuts when you know what you want to do next."
-        >
+        <SectionCard eyebrow="Jump points" title="Navigate by task">
           <div className="grid gap-4 md:grid-cols-3">
             {[
               {
                 href: "/members",
                 title: "Members",
-                body: "Add, rename, archive, and reactivate club members without the session forms getting in the way.",
               },
               {
                 href: "/sessions",
                 title: "Sessions",
-                body: "Create matches, then open any session to edit attendance and court rent in one focused screen.",
               },
               {
                 href: "/costs",
                 title: "Costs",
-                body: "Review monthly totals and attendance-driven expense splits without the editing controls mixed in.",
               },
             ].map((item) => (
               <Link
@@ -95,18 +84,13 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
                 className="rounded-[2rem] border border-white/10 bg-white/6 p-5 transition hover:border-amber-300/30 hover:bg-white/9"
               >
                 <p className="text-sm uppercase tracking-[0.25em] text-amber-200/60">{item.title}</p>
-                <p className="mt-3 text-sm leading-6 text-stone-300">{item.body}</p>
-                <p className="mt-5 text-sm font-semibold text-amber-200">Open {item.title}</p>
+                <p className="mt-6 text-sm font-semibold text-amber-200">Open {item.title}</p>
               </Link>
             ))}
           </div>
         </SectionCard>
 
-        <SectionCard
-          eyebrow="Current month"
-          title={monthTitle}
-          description="A quick read on who is showing up most often and where the monthly split currently stands."
-        >
+        <SectionCard eyebrow="Current month" title={monthTitle}>
           {data.monthlyTotals.length === 0 ? (
             <EmptyState>The monthly snapshot will appear after you save your first session.</EmptyState>
           ) : (
@@ -133,11 +117,7 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
         </SectionCard>
       </div>
 
-      <SectionCard
-        eyebrow="Recent sessions"
-        title="Latest match records"
-        description="Open a session to edit attendance, adjust court rent, or remove an incorrect record."
-      >
+      <SectionCard eyebrow="Recent sessions" title="Latest match records">
         {recentSessions.length === 0 ? (
           <EmptyState>No match saved yet. Start in the Sessions tab to create the first one.</EmptyState>
         ) : (

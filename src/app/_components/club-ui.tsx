@@ -44,6 +44,14 @@ export function EmptyState({ children }: { children: ReactNode }) {
   );
 }
 
+export function ReadOnlyNotice({ children }: { children: ReactNode }) {
+  return (
+    <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/8 px-5 py-4 text-sm leading-6 text-amber-100">
+      {children}
+    </div>
+  );
+}
+
 export function StatCard({ label, value, detail }: { label: string; value: string | number; detail?: string }) {
   return (
     <div className="rounded-[2rem] border border-white/10 bg-white/8 p-5">
@@ -255,6 +263,54 @@ export function SessionEditor({
           Save changes
         </button>
       </form>
+    </article>
+  );
+}
+
+export function SessionDetailReadOnly({
+  session,
+}: {
+  session: MatchSession;
+}) {
+  return (
+    <article className="rounded-[2rem] border border-white/10 bg-[#191612] p-6 shadow-[0_30px_60px_rgba(0,0,0,0.25)]">
+      <div>
+        <p className="text-xs uppercase tracking-[0.3em] text-amber-200/60">Session detail</p>
+        <h3 className="mt-2 text-3xl font-semibold text-white">{formatDate(session.playedOn)}</h3>
+        <p className="mt-2 text-sm text-stone-300">
+          {session.attendeeCount} players · {formatMoney(session.sharePerPlayer)} each · {formatMoney(session.courtCost)} total
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-4">
+          <p className="text-sm text-stone-400">Court rent</p>
+          <p className="mt-2 text-xl font-semibold text-white">{formatMoney(session.courtCost)}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-4">
+          <p className="text-sm text-stone-400">Players</p>
+          <p className="mt-2 text-xl font-semibold text-white">{session.attendeeCount}</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-4">
+          <p className="text-sm text-stone-400">Per player</p>
+          <p className="mt-2 text-xl font-semibold text-white">{formatMoney(session.sharePerPlayer)}</p>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <p className="text-sm font-medium text-stone-300">Players in this match</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {session.attendeeNames.map((attendeeName) => (
+            <span
+              key={attendeeName}
+              className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-sm text-stone-300"
+            >
+              <span className="text-stone-100">{attendeeName}</span>
+              <span className="ml-2 text-amber-200">{formatMoney(session.sharePerPlayer)}</span>
+            </span>
+          ))}
+        </div>
+      </div>
     </article>
   );
 }

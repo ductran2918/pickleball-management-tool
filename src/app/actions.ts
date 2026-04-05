@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requireAdmin } from "./_lib/auth";
 import { ensureSchema, getSql } from "../lib/db";
 
 function getTrimmedString(value: FormDataEntryValue | null) {
@@ -40,6 +41,7 @@ function revalidateAppPaths(extraPaths: string[] = []) {
 }
 
 export async function addMember(formData: FormData) {
+  await requireAdmin();
   await ensureSchema();
   const sql = getSql();
 
@@ -59,6 +61,7 @@ export async function addMember(formData: FormData) {
 }
 
 export async function setMemberActive(formData: FormData) {
+  await requireAdmin();
   await ensureSchema();
   const sql = getSql();
 
@@ -79,6 +82,7 @@ export async function setMemberActive(formData: FormData) {
 }
 
 export async function updateMemberName(formData: FormData) {
+  await requireAdmin();
   await ensureSchema();
   const sql = getSql();
 
@@ -104,6 +108,7 @@ export async function updateMemberName(formData: FormData) {
 }
 
 export async function createSession(formData: FormData) {
+  await requireAdmin();
   await ensureSchema();
   const sql = getSql();
 
@@ -148,6 +153,7 @@ export async function createSession(formData: FormData) {
 }
 
 export async function updateSession(formData: FormData) {
+  await requireAdmin();
   await ensureSchema();
   const sql = getSql();
 
@@ -187,6 +193,7 @@ export async function updateSession(formData: FormData) {
 }
 
 export async function deleteSession(formData: FormData) {
+  await requireAdmin();
   await ensureSchema();
   const sql = getSql();
 

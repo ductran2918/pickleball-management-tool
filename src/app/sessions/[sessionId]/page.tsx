@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { EmptyState, SectionCard, SessionEditor } from "../../_components/club-ui";
+import { EmptyState, ReadOnlyNotice, SectionCard, SessionDetailReadOnly, SessionEditor } from "../../_components/club-ui";
+import { isAdminAuthenticated } from "../../_lib/auth";
 import { formatDate } from "../../_lib/format";
 import { getSessionDetailData } from "../../../lib/db";
 
@@ -22,6 +23,7 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   }
 
   const data = await getSessionDetailData(sessionId);
+  const isAdmin = await isAdminAuthenticated();
 
   if (!data.session) {
     notFound();
@@ -55,10 +57,17 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
           {data.activeMembers.length === 0 ? (
             <EmptyState>There are no active members right now, but archived members can still be preserved in old session records.</EmptyState>
           ) : null}
+          {!isAdmin ? (
+            <ReadOnlyNotice>Guest mode is read-only. Admin sign-in is required to edit attendance or session cost.</ReadOnlyNotice>
+          ) : null}
         </div>
       </SectionCard>
 
-      <SessionEditor session={data.session} allMembers={data.allMembers} />
+      {isAdmin ? (
+        <SessionEditor session={data.session} allMembers={data.allMembers} />
+      ) : (
+        <SessionDetailReadOnly session={data.session} />
+      )}
     </div>
   );
 }
