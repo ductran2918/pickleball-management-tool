@@ -29,7 +29,7 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
   return (
     <div className="grid gap-8">
       <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.25),transparent_35%),linear-gradient(135deg,#1d180f,#0d0b09_60%,#1a1308)] px-6 py-8 shadow-[0_40px_120px_rgba(0,0,0,0.4)] sm:px-10 sm:py-10">
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div className="max-w-6xl">
           <div>
             <p className="text-sm uppercase tracking-[0.35em] text-amber-200/70">Welcome</p>
             <h2 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
@@ -52,7 +52,7 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard label="Active members" value={data.activeMembers.length} />
             <StatCard label="Matches saved" value={data.sessions.length} />
             <StatCard label="Month view" value={monthTitle} />
