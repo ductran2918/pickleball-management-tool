@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { formatMoney } from "../_lib/format";
 import type { MonthlyMemberTotal } from "../../lib/db";
 
 type PaymentReminderGeneratorProps = {
@@ -19,7 +18,7 @@ type ReminderPreset = {
 const SPECIAL_CASE_NAMES = ["Chị Nam Trân", "Nam Phương"] as const;
 
 function buildMessage(monthTitle: string, playerName: string, totalCost: number, closingName = playerName) {
-  return `Cho em tổng kết chi phí pickleball tháng ${monthTitle} của "${playerName}" là ${formatMoney(totalCost)}. Em tổng kết ở link này ạ: https://pickleball-d7-club.vercel.app/costs Số tài khoản của em là 054611 - ngân hàng VIB (NH Quốc tế) ạ. Thanks, ${closingName}.`;
+  return `Cho em tổng kết chi phí pickleball ${monthTitle} của ${playerName} là ${Math.round(totalCost)}k. Em tổng kết ở link này ạ: https://pickleball-d7-club.vercel.app/costs. Số tài khoản của em là 054611 - ngân hàng VIB (NH Quốc tế) ạ. Thanks, ${closingName}.`;
 }
 
 export function PaymentReminderGenerator({
