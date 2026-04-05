@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { ensureSchema, getSql } from "../lib/db";
 
@@ -30,6 +31,14 @@ function getAttendeeIds(formData: FormData) {
   return [...new Set(formData.getAll("attendeeIds").map((value) => Number(value)).filter(Number.isInteger))];
 }
 
+function revalidateAppPaths(extraPaths: string[] = []) {
+  const paths = ["/", "/members", "/sessions", "/costs", ...extraPaths];
+
+  for (const path of new Set(paths)) {
+    revalidatePath(path);
+  }
+}
+
 export async function addMember(formData: FormData) {
   await ensureSchema();
   const sql = getSql();
@@ -46,7 +55,7 @@ export async function addMember(formData: FormData) {
     ON CONFLICT DO NOTHING
   `;
 
-  revalidatePath("/");
+  revalidateAppPaths();
 }
 
 export async function setMemberActive(formData: FormData) {
@@ -66,7 +75,7 @@ export async function setMemberActive(formData: FormData) {
     WHERE id = ${memberId}
   `;
 
-  revalidatePath("/");
+  revalidateAppPaths();
 }
 
 export async function updateMemberName(formData: FormData) {
@@ -91,7 +100,7 @@ export async function updateMemberName(formData: FormData) {
       )
   `;
 
-  revalidatePath("/");
+  revalidateAppPaths();
 }
 
 export async function createSession(formData: FormData) {
@@ -135,7 +144,7 @@ export async function createSession(formData: FormData) {
     throw error;
   }
 
-  revalidatePath("/");
+  revalidateAppPaths();
 }
 
 export async function updateSession(formData: FormData) {
@@ -174,7 +183,7 @@ export async function updateSession(formData: FormData) {
     `),
   ]);
 
-  revalidatePath("/");
+  revalidateAppPaths([`/sessions/${sessionId}`]);
 }
 
 export async function deleteSession(formData: FormData) {
@@ -182,6 +191,7 @@ export async function deleteSession(formData: FormData) {
   const sql = getSql();
 
   const sessionId = getNumber(formData.get("sessionId"));
+  const redirectTo = getTrimmedString(formData.get("redirectTo"));
 
   if (!Number.isInteger(sessionId)) {
     return;
@@ -192,5 +202,9 @@ export async function deleteSession(formData: FormData) {
     WHERE id = ${sessionId}
   `;
 
-  revalidatePath("/");
+  revalidateAppPaths();
+
+  if (redirectTo) {
+    redirect(redirectTo);
+  }
 }

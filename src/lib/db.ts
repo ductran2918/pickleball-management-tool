@@ -42,6 +42,19 @@ export type DashboardData = {
   monthlyTotals: MonthlyMemberTotal[];
 };
 
+export type MembersData = Pick<DashboardData, "activeMembers" | "archivedMembers">;
+export type SessionsData = {
+  activeMembers: Member[];
+  allMembers: Member[];
+  sessions: MatchSession[];
+};
+export type SessionDetailData = {
+  activeMembers: Member[];
+  allMembers: Member[];
+  session: MatchSession | null;
+};
+export type CostsData = Pick<DashboardData, "monthOptions" | "selectedMonth" | "monthlyTotals">;
+
 export function getSql() {
   const connectionString = process.env.DATABASE_URL;
 
@@ -280,5 +293,48 @@ export async function getDashboardData(selectedMonthFromSearch?: string): Promis
       sessionsJoined: Number(member.sessions_joined),
       totalExpense: Number(member.total_expense),
     })),
+  };
+}
+
+export async function getOverviewData(selectedMonthFromSearch?: string) {
+  return getDashboardData(selectedMonthFromSearch);
+}
+
+export async function getMembersData(): Promise<MembersData> {
+  const data = await getDashboardData();
+
+  return {
+    activeMembers: data.activeMembers,
+    archivedMembers: data.archivedMembers,
+  };
+}
+
+export async function getSessionsData(): Promise<SessionsData> {
+  const data = await getDashboardData();
+
+  return {
+    activeMembers: data.activeMembers,
+    allMembers: [...data.activeMembers, ...data.archivedMembers],
+    sessions: data.sessions,
+  };
+}
+
+export async function getSessionDetailData(sessionId: number): Promise<SessionDetailData> {
+  const data = await getDashboardData();
+
+  return {
+    activeMembers: data.activeMembers,
+    allMembers: [...data.activeMembers, ...data.archivedMembers],
+    session: data.sessions.find((session) => session.id === sessionId) ?? null,
+  };
+}
+
+export async function getCostsData(selectedMonthFromSearch?: string): Promise<CostsData> {
+  const data = await getDashboardData(selectedMonthFromSearch);
+
+  return {
+    monthOptions: data.monthOptions,
+    selectedMonth: data.selectedMonth,
+    monthlyTotals: data.monthlyTotals,
   };
 }
