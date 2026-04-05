@@ -1,6 +1,6 @@
-import { EmptyState, MonthlyAttendanceChart, SectionCard } from "../_components/club-ui";
+import { EmptyState, MonthlyAttendanceChart, SectionCard, StatCard } from "../_components/club-ui";
 import { MonthFilter } from "../_components/month-filter";
-import { getMonthTitle } from "../_lib/format";
+import { formatMoney, getMonthTitle } from "../_lib/format";
 import { getCostsData } from "../../lib/db";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +24,11 @@ export default async function CostsPage({ searchParams }: CostsPageProps) {
         description="This screen is read-focused. Use it to review monthly splits without mixing in member and session editing controls."
         actions={<MonthFilter monthOptions={data.monthOptions} selectedMonth={data.selectedMonth} />}
       >
+        <div className="mb-6 grid gap-4 sm:grid-cols-2">
+          <StatCard label="Total matches this month" value={data.totalMatches} />
+          <StatCard label="Total cost this month" value={formatMoney(data.totalCost)} />
+        </div>
+
         {data.monthlyTotals.length === 0 ? (
           <EmptyState>The monthly breakdown will appear after you save your first session.</EmptyState>
         ) : (

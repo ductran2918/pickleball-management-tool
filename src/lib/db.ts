@@ -53,7 +53,10 @@ export type SessionDetailData = {
   allMembers: Member[];
   session: MatchSession | null;
 };
-export type CostsData = Pick<DashboardData, "monthOptions" | "selectedMonth" | "monthlyTotals">;
+export type CostsData = Pick<DashboardData, "monthOptions" | "selectedMonth" | "monthlyTotals"> & {
+  totalMatches: number;
+  totalCost: number;
+};
 
 export function getSql() {
   const connectionString = process.env.DATABASE_URL;
@@ -331,10 +334,15 @@ export async function getSessionDetailData(sessionId: number): Promise<SessionDe
 
 export async function getCostsData(selectedMonthFromSearch?: string): Promise<CostsData> {
   const data = await getDashboardData(selectedMonthFromSearch);
+  const monthPrefix = `${data.selectedMonth}-`;
+  const selectedMonthSessions = data.sessions.filter((session) => session.playedOn.startsWith(monthPrefix));
+  const totalCost = selectedMonthSessions.reduce((sum, session) => sum + session.courtCost, 0);
 
   return {
     monthOptions: data.monthOptions,
     selectedMonth: data.selectedMonth,
     monthlyTotals: data.monthlyTotals,
+    totalMatches: selectedMonthSessions.length,
+    totalCost,
   };
 }
