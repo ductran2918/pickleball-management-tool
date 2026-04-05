@@ -61,35 +61,7 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
         </div>
       </section>
 
-      <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-        <SectionCard eyebrow="Jump points" title="Navigate by task">
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              {
-                href: "/members",
-                title: "Members",
-              },
-              {
-                href: "/sessions",
-                title: "Sessions",
-              },
-              {
-                href: "/costs",
-                title: "Costs",
-              },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-[2rem] border border-white/10 bg-white/6 p-5 transition hover:border-amber-300/30 hover:bg-white/9"
-              >
-                <p className="text-sm uppercase tracking-[0.25em] text-amber-200/60">{item.title}</p>
-                <p className="mt-6 text-sm font-semibold text-amber-200">Open {item.title}</p>
-              </Link>
-            ))}
-          </div>
-        </SectionCard>
-
+      <div className="grid gap-8">
         <SectionCard eyebrow="Current month" title={monthTitle}>
           {data.monthlyTotals.length === 0 ? (
             <EmptyState>The monthly snapshot will appear after you save your first session.</EmptyState>
