@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import {
   EmptyState,
+  MonthFilter,
   MonthlyAttendanceChart,
   SectionCard,
   SessionSummaryCard,
@@ -22,9 +23,9 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
   const resolvedSearchParams = await searchParams;
   const data = await getOverviewData(resolvedSearchParams.month);
   const monthTitle = getMonthTitle(data.selectedMonth);
-  const monthlyTotalExpense = data.monthlyTotals.reduce((sum, member) => sum + member.totalExpense, 0);
+  const selectedYear = data.selectedMonth.slice(0, 4);
+  const matchesPlayedThisYear = data.sessions.filter((session) => session.playedOn.startsWith(`${selectedYear}-`)).length;
   const recentSessions = data.sessions.slice(0, 4);
-  const topMembers = data.monthlyTotals.slice(0, 5);
 
   return (
     <div className="grid gap-8">
@@ -52,39 +53,33 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:max-w-3xl">
             <StatCard label="Active members" value={data.activeMembers.length} />
-            <StatCard label="Matches saved" value={data.sessions.length} />
-            <StatCard label="Month view" value={monthTitle} />
-            <StatCard label="Tracked cost this month" value={new Intl.NumberFormat("vi-VN").format(monthlyTotalExpense)} />
+            <StatCard label={`Matches played in ${selectedYear}`} value={matchesPlayedThisYear} />
           </div>
         </div>
       </section>
 
       <div className="grid gap-8">
-        <SectionCard eyebrow="Current month" title={monthTitle}>
+        <SectionCard
+          eyebrow="Current month"
+          title={monthTitle}
+          actions={
+            <div className="flex flex-col gap-3 sm:items-end">
+              <MonthFilter monthOptions={data.monthOptions} selectedMonth={data.selectedMonth} />
+              <Link
+                href={`/costs?month=${data.selectedMonth}`}
+                className="inline-flex rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-amber-200"
+              >
+                View club data by month
+              </Link>
+            </div>
+          }
+        >
           {data.monthlyTotals.length === 0 ? (
             <EmptyState>The monthly snapshot will appear after you save your first session.</EmptyState>
           ) : (
-            <div className="space-y-5">
-              <MonthlyAttendanceChart members={data.monthlyTotals} monthTitle={monthTitle} />
-              <div className="space-y-3">
-                {topMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/6 px-4 py-4"
-                  >
-                    <div>
-                      <p className="font-medium text-stone-100">{member.name}</p>
-                      <p className="mt-1 text-sm text-stone-400">{member.sessionsJoined} matches joined</p>
-                    </div>
-                    <p className="text-lg font-semibold text-amber-200">
-                      {new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 2 }).format(member.totalExpense)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <MonthlyAttendanceChart members={data.monthlyTotals} monthTitle={monthTitle} />
           )}
         </SectionCard>
       </div>
