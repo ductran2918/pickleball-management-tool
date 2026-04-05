@@ -1,5 +1,7 @@
 import { EmptyState, MonthlyAttendanceChart, SectionCard, StatCard } from "../_components/club-ui";
 import { MonthFilter } from "../_components/month-filter";
+import { PaymentReminderGenerator } from "../_components/payment-reminder-generator";
+import { isAdminAuthenticated } from "../_lib/auth";
 import { formatMoney, getMonthTitle } from "../_lib/format";
 import { getCostsData } from "../../lib/db";
 
@@ -14,54 +16,67 @@ type CostsPageProps = {
 export default async function CostsPage({ searchParams }: CostsPageProps) {
   const resolvedSearchParams = await searchParams;
   const data = await getCostsData(resolvedSearchParams.month);
+  const isAdmin = await isAdminAuthenticated();
   const monthTitle = getMonthTitle(data.selectedMonth);
 
   return (
-    <div className="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
-      <SectionCard
-        eyebrow="Cost review"
-        title={monthTitle}
-        description="This screen is read-focused. Use it to review monthly splits without mixing in member and session editing controls."
-        actions={<MonthFilter monthOptions={data.monthOptions} selectedMonth={data.selectedMonth} />}
-      >
-        <div className="mb-6 grid gap-4 sm:grid-cols-2">
-          <StatCard label="Total matches this month" value={data.totalMatches} />
-          <StatCard label="Total cost this month" value={formatMoney(data.totalCost)} />
-        </div>
-
-        {data.monthlyTotals.length === 0 ? (
-          <EmptyState>The monthly breakdown will appear after you save your first session.</EmptyState>
-        ) : (
-          <MonthlyAttendanceChart members={data.monthlyTotals} monthTitle={monthTitle} />
-        )}
-      </SectionCard>
-
-      <SectionCard
-        eyebrow="Member totals"
-        title="Expense split by player"
-        description="Each amount reflects the court cost divided evenly among players who attended each session in the selected month."
-      >
-        {data.monthlyTotals.length === 0 ? (
-          <EmptyState>No costs to review for this month yet.</EmptyState>
-        ) : (
-          <div className="space-y-3">
-            {data.monthlyTotals.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/6 px-4 py-4"
-              >
-                <div>
-                  <p className="font-medium text-stone-100">{member.name}</p>
-                  <p className="mt-1 text-sm text-stone-400">{member.sessionsJoined} matches joined</p>
-                </div>
-                <p className="text-lg font-semibold text-amber-200">
-                  {new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 2 }).format(member.totalExpense)}
-                </p>
-              </div>
-            ))}
+    <div className="grid gap-8">
+      <div className="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
+        <SectionCard
+          eyebrow="Cost review"
+          title={monthTitle}
+          description="This screen is read-focused. Use it to review monthly splits without mixing in member and session editing controls."
+          actions={<MonthFilter monthOptions={data.monthOptions} selectedMonth={data.selectedMonth} />}
+        >
+          <div className="mb-6 grid gap-4 sm:grid-cols-2">
+            <StatCard label="Total matches this month" value={data.totalMatches} />
+            <StatCard label="Total cost this month" value={formatMoney(data.totalCost)} />
           </div>
-        )}
-      </SectionCard>
+
+          {data.monthlyTotals.length === 0 ? (
+            <EmptyState>The monthly breakdown will appear after you save your first session.</EmptyState>
+          ) : (
+            <MonthlyAttendanceChart members={data.monthlyTotals} monthTitle={monthTitle} />
+          )}
+        </SectionCard>
+
+        <SectionCard
+          eyebrow="Member totals"
+          title="Expense split by player"
+          description="Each amount reflects the court cost divided evenly among players who attended each session in the selected month."
+        >
+          {data.monthlyTotals.length === 0 ? (
+            <EmptyState>No costs to review for this month yet.</EmptyState>
+          ) : (
+            <div className="space-y-3">
+              {data.monthlyTotals.map((member) => (
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/6 px-4 py-4"
+                >
+                  <div>
+                    <p className="font-medium text-stone-100">{member.name}</p>
+                    <p className="mt-1 text-sm text-stone-400">{member.sessionsJoined} matches joined</p>
+                  </div>
+                  <p className="text-lg font-semibold text-amber-200">
+                    {new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 2 }).format(member.totalExpense)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </SectionCard>
+      </div>
+
+      {isAdmin ? (
+        <SectionCard
+          eyebrow="Admin only"
+          title="Payment reminder generator"
+          description="Generate a one-off reminder message instantly. Nothing is stored in the database."
+        >
+          <PaymentReminderGenerator monthTitle={monthTitle} monthlyTotals={data.monthlyTotals} />
+        </SectionCard>
+      ) : null}
     </div>
   );
 }
