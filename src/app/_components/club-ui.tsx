@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { deleteSession, updateSession } from "../actions";
-import { formatDate, formatMoney, getMonthTitle } from "../_lib/format";
+import { formatDate, formatMoney } from "../_lib/format";
 import type { MatchSession, Member, MonthlyMemberTotal } from "../../lib/db";
 
 const sectionClassName =
@@ -312,42 +312,5 @@ export function SessionDetailReadOnly({
         </div>
       </div>
     </article>
-  );
-}
-
-export function MonthFilter({
-  monthOptions,
-  selectedMonth,
-}: {
-  monthOptions: Array<{ key: string; label: string }>;
-  selectedMonth: string;
-}) {
-  return (
-    <form>
-      <label className="space-y-2 text-sm">
-        <span className="block font-medium text-stone-300">Month</span>
-        <select
-          name="month"
-          defaultValue={selectedMonth}
-          className="w-full rounded-full border border-white/10 bg-stone-950/70 px-4 py-3 text-stone-100 outline-none transition focus:border-amber-300/60"
-        >
-          {monthOptions.length > 0 ? (
-            monthOptions.map((month) => (
-              <option key={month.key} value={month.key}>
-                {month.label}
-              </option>
-            ))
-          ) : (
-            <option value={selectedMonth}>{getMonthTitle(selectedMonth)}</option>
-          )}
-        </select>
-      </label>
-      <button
-        type="submit"
-        className="mt-3 rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-stone-200 transition hover:border-amber-300/40 hover:text-white"
-      >
-        View month
-      </button>
-    </form>
   );
 }

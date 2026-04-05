@@ -2,12 +2,12 @@ import Link from "next/link";
 
 import {
   EmptyState,
-  MonthFilter,
   MonthlyAttendanceChart,
   SectionCard,
   SessionSummaryCard,
   StatCard,
 } from "./_components/club-ui";
+import { MonthFilter } from "./_components/month-filter";
 import { getMonthTitle } from "./_lib/format";
 import { getOverviewData } from "../lib/db";
 
@@ -62,11 +62,11 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
 
       <div className="grid gap-8">
         <SectionCard
-          eyebrow="Current month"
+          eyebrow="Monthly overview"
           title={monthTitle}
           actions={
-            <div className="flex flex-col gap-3 sm:items-end">
-              <MonthFilter monthOptions={data.monthOptions} selectedMonth={data.selectedMonth} />
+            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+              <MonthFilter monthOptions={data.monthOptions} selectedMonth={data.selectedMonth} inline />
               <Link
                 href={`/costs?month=${data.selectedMonth}`}
                 className="inline-flex rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-amber-200"

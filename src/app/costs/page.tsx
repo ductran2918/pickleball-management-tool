@@ -1,4 +1,5 @@
-import { EmptyState, MonthFilter, MonthlyAttendanceChart, SectionCard } from "../_components/club-ui";
+import { EmptyState, MonthlyAttendanceChart, SectionCard } from "../_components/club-ui";
+import { MonthFilter } from "../_components/month-filter";
 import { getMonthTitle } from "../_lib/format";
 import { getCostsData } from "../../lib/db";
 
